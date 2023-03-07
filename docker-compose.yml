@@ -1,0 +1,32 @@
+version: '3.0'
+services:
+
+  ### NGINX #########################################
+  nginx:
+    container_name: my_nginx
+    build:
+      context: ./nginx
+      args:
+        - NGINX_VERSION=1.17
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d:ro
+      - ./www/:/data/www:rw
+      - ./logs/nginx/:/var/log/nginx
+
+  ### MySQL ################################################
+  mysql:
+    container_name: my_mysql
+    build:
+      context: ./mysql
+      args:
+        - MYSQL_VERSION=latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root # 必须要设置这个
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
