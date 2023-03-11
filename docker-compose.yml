@@ -31,6 +31,27 @@ services:
     volumes:
       - ./data/mysql:/var/lib/mysql
 
+  ### Redis ################################################
+  redis:
+    container_name: my_redis
+    build:
+      context: ./redis
+      args:
+        - REDIS_VERSION=latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    command: --requirepass ${REDIS_PASSWORD}
+
+  ### Redis Cluster ##########################################
+  redis-cluster:
+    container_name: my_redis_cluster
+    build:
+      context: ./redis-cluster
+    ports:
+      - "7000-7005:7000-7005"
+
   ### Gitlab ################################################
   gitlab:
     container_name: my_gitlab
@@ -63,3 +84,14 @@ services:
       - ./logs/gitlab:/var/log/gitlab # 挂载gitlab日志
 
     restart: always
+
+  ### Jenkins #########################################
+  jenkins:
+    container_name: my_jenkins
+    build:
+      context: ./jenkins
+    ports:
+      - "8090:8080"
+      - "50000:50000"
+    volumes:
+      - ./jenkins/jenkins_home:/var/jenkins_home
